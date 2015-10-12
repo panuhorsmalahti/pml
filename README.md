@@ -1,12 +1,10 @@
-# Imports Module Definition
+# Polymer Module Loader
 
-IMD is an implementation of the
-[AMD specification](https://github.com/amdjs/amdjs-api/blob/master/AMD.md) that
-performs absolutely no loading. The primary goal of it is to play nice with
-HTML Imports, but it should work well with any code loader that doesn't mandate
-a particular module registry.
+PML is an implementation of the
+[AMD specification](https://github.com/amdjs/amdjs-api/blob/master/AMD.md).
+The primary goal of it is to play nice with HTML Imports.
 
-## Why IMD?
+## Why PML?
 
 JavaScript module systems generally perform three different tasks:
 
@@ -18,24 +16,7 @@ JavaScript module systems generally perform three different tasks:
   3. **Loading** Given a module reference that is not yet loaded into the
      registry, load it from some source, usually a URL (via an XHR).
 
-IMD only performs the first two tasks, in a way that's fully compliant with the
-AMD spec.
-
-This is the minimal module system needed if you're already loaded your script
-resources via HTML Imports. HTML Imports handily takes care of loading resources
-and their transitive dependencies, de-duplicating imports, and executing scripts
-in the correct order.
-
-Together, IMD and HTML Imports form a really great module system. Some of the
-benefits over RequireJS include:
-  * IMD is extremely small. With no loading code, IMD is almost entirely just a
-    AMD-compiant registry in just 150 lines of code (with comments).
-  * A module defined in an HTML Import can be sure its non-script resources,
-    like CSS and HTML templates, have been loaded as well.
-  * Browsers with native HTML Import support can aggressively pre-scan and
-    pre-load HTML Imports by reading the `<link>` tags.
-  * Servers that support HTTP/2 Push can easily read `<link>` tags and
-    preemptively push dependencies, resulting in very fast load times.
+Together, PML and HTML Imports form a really great module system.
 
 ## What about ES6 (ES2015) Modules?
 
@@ -45,7 +26,7 @@ allow developers to use ES6 modules now, _if_ they're willing to deal with a
 build step.
 
 Not every project can or wishes to do so, and HTML Imports is not a JavaScript
-module definition system, so IMD is an extremely lightweight way to use modules
+module definition system, so PML is an extremely lightweight way to use modules
 on top of imports.
 
 When the ES6 module loader spec is further along, we will look into ways of
@@ -54,26 +35,26 @@ We're very excited about the possibilities for interop.
 
 ## How Do I?
 
-### Download and Include IMD
+### Download and Include PML
 
-IMD is distributed as an HTML Import-able HTML file, naturally. Install and uselike this:
+PML is distributed as an HTML Import-able HTML file, naturally. Install and uselike this:
 
 Install:
 ```
-> bower install PolymerLabs/IMD --save
+> bower install panuhorsmalahti/PML --save
 ```
 
 Import:
 
 ```html
-<link rel="import" href="../imd/imd.html">
+<link rel="import" href="../pml/pml.html">
 ```
 
 We recommend that HTML files that require or define _do_ _not_ directly import
-IMD, but rather let the main page import IMD, usually as the very first import.
+PML, but rather let the main page import PML, usually as the very first import.
 This is so that an application that really requires RequireJS to load modules
 (this can be true when loading pure JS modules with no corresponding `<script>`
-tags), can setup RequireJS instead of IMD. Since IMD is fully AMD compliant,
+tags), can setup RequireJS instead of PML. Since PML is fully AMD compliant,
 all modules defined in HTML imports will work just fine.
 
 ### Define a Module
@@ -81,7 +62,7 @@ all modules defined in HTML imports will work just fine.
 Modules are defined exactly as in other AMD systems like RequireJS:
 Public modules are defined by name:
 
-Here's the definition of a mythical module, 'squidbits', that depnds on the
+Here's the definition of a mythical module, 'squidbits', that depends on the
 modules 'tentacles.html', and 'ink':
 
 ```javascript
@@ -90,7 +71,7 @@ define('squidbits', ['./tentacles.html', 'ink'], function(tentacles, ink) {
 });
 ```
 
-Now, since IMD is targeted at projects already using HTML Imports, it's likely
+Now, since PML is targeted at projects already using HTML Imports, it's likely
 that the module will be defined inside an HTML file, like so:
 
 ```html
@@ -166,13 +147,6 @@ Or a node directly:
    document.appendChild(document.importNode(bar.content));
  })
  ```
-
-### Reduced import/define duplication
-
-The one downside of IMD relative to RequireJS is that dependencies often appear
-twice in a file: once as a HTML Import and one in the `define()` call. We could
-conceivably infer the dependency list from the imports so that there's no
-duplication.
 
 ### ES6
 
