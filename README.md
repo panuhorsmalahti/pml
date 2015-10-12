@@ -2,7 +2,7 @@
 
 PML is an implementation of the
 [AMD specification](https://github.com/amdjs/amdjs-api/blob/master/AMD.md).
-The primary goal of it is to play nice with HTML Imports.
+The primary goal of it is to play nice with HTML Imports. Based on [IMD](https://github.com/PolymerLabs/IMD).
 
 ## Why PML?
 
