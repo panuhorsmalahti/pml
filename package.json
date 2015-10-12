@@ -1,0 +1,17 @@
+{
+    "name": "pml",
+    "version": "0.0.1",
+    "description": "Polymer module loader",
+    "keywords": ["polymer", "pml", "module", "loader", "amd"],
+    "author": "Panu Horsmalahti <panu.horsmalahti@iki.fi>",
+    "preferGlobal": true,
+    "homepage": "https://github.com/panuhorsmalahti/pml",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/panuhorsmalahti/pml.git"
+    },
+    "license": "BSD-like",
+    "devDependencies": {
+        "serve": "~1.4.0"
+    }
+}
