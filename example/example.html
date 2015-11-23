@@ -1,4 +1,8 @@
 <script>
+  require.config({
+      baseUrl: "components"
+  });
+
   define('local', [], function() {
       return { foo: 1 };
   });

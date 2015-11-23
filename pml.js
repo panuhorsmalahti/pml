@@ -14,6 +14,11 @@
     /** @type {Object<key, *>} A mapping of ids to modules. */
     var _modules = Object.create(null);
 
+    // Default configuration
+    var _config = {
+        baseUrl: ""
+    };
+
     // `define`
 
     /**
@@ -65,8 +70,9 @@
         });
     }
 
-    // Semi-private. We expose this for tests & introspection.
+    // Semi-private. We expose these for tests & introspection.
     define._modules = _modules;
+    define._config = _config;
 
     /**
      * Let other implementations know that this is an AMD implementation.
@@ -103,6 +109,7 @@
     function loadScript(src, callback) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
+        script.async = true;
         script.onload = function() {
             callback();
         };
@@ -211,7 +218,7 @@
             });
         } else if (!(id in _modules)) {
             // TODO: Fix hardcoded jquery path.
-            loadScript('components/jquery/dist/' + id + '.js', function() {
+            loadScript(_config.baseUrl + '/jquery/dist/' + id + '.js', function() {
                 // After loading the script the module should be loaded,
                 // assuming the library calls define().
                 if (_modules[id]) {
@@ -228,5 +235,13 @@
 
     // Exports
     scope.define = define;
+
+    scope.require = {
+        config: function(configuration) {
+            Object.keys(configuration).forEach(function(option) {
+                _config[option] = configuration[option];
+            });
+        }
+    };
 
 })(this);
