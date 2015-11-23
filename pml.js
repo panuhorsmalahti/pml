@@ -96,6 +96,21 @@
     }
 
     /**
+     * Append script to head and load it.
+     * @param {string} src to load, e.g. "test.js"
+     * @param {Function} callback is called once the load is complete.
+     */
+    function loadScript(src, callback) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.onload = function() {
+            callback();
+        };
+        script.src = src;
+        document.head.appendChild(script);
+    }
+
+    /**
      * Calls `factory` with the exported values of `dependencies`.
      *
      * @param {string} id The id of the module defined by the factory.
@@ -195,10 +210,19 @@
                 id: moduleId
             });
         } else if (!(id in _modules)) {
-            callback(new ReferenceError('The module "' + id + '" has not been loaded' +
-                (moduleId ? ' for ' + moduleId : '')));
+            // TODO: Fix hardcoded jquery path.
+            loadScript('components/jquery/dist/' + id + '.js', function() {
+                // After loading the script the module should be loaded,
+                // assuming the library calls define().
+                if (_modules[id]) {
+                    callback(undefined, _modules[id]);
+                } else {
+                    callback(new ReferenceError('The module "' + id + '" has not been loaded' +
+                        (moduleId ? ' for ' + moduleId : '')));
+                }
+            });
         } else {
-            return callback(undefined, _modules[id]);
+            callback(undefined, _modules[id]);
         }
     }
 
