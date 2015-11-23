@@ -35,23 +35,34 @@
             // TODO(nevir): Default dependencies should be require, exports, module.
             dependencies = Array.isArray(id) ? id : [];
         }
+
+        // If id was not defined, infer it
         var inferredId = _inferModuleId();
         if (typeof id !== 'string') {
             id = inferredId;
         }
+
         // TODO(nevir): Just support \ as path separators too. Yay Windows!
         if (id.indexOf('\\') !== -1) {
             throw new TypeError('Please use / as module path delimiters');
         }
+
         if (id in _modules) {
             throw new Error('The module "' + id + '" has already been defined');
         }
+
         // Extract the entire module path up to the file name. Aka `dirname()`.
-        //
         // TODO(nevir): This is naive; doesn't support the vulcanize case.
         var base = inferredId.match(/^(.*?)[^\/]*$/)[1];
-        _modules[id] = _runFactory(id, base, dependencies, factory);
-        return _modules[id];
+
+        _runFactory(id, base, dependencies, factory, function(error, module) {
+            if (error) {
+                throw error;
+                return;
+            }
+
+            _modules[id] = module;
+        });
     }
 
     // Semi-private. We expose this for tests & introspection.
@@ -92,27 +103,50 @@
      * @param {Array<string>} dependencies
      * @param {function(...*)|*} factory
      */
-    function _runFactory(moduleId, base, dependencies, factory) {
-        if (typeof factory !== 'function') return factory;
+    function _runFactory(moduleId, base, dependencies, factory, callback) {
+        // If the factory argument is an object, that object should be assigned
+        // as the exported value of the module.
+        if (typeof factory !== 'function') {
+            callback(undefined, factory);
+            return;
+        }
 
-        var exports, module;
-        var modules = dependencies.map(function(id) {
-            if (id === 'exports') {
-                return exports = {};
-            }
-            if (id === 'require') {
-                return _require;
-            }
-            if (id === 'module') {
-                return module = {
-                    id: moduleId
-                };
-            }
-            id = _resolveRelativeId(base, id);
-            return _require(id, moduleId);
-        });
-        var result = factory.apply(null, modules);
-        return (module && module.exports) || exports || result;
+        var unresolvedDependencies = dependencies.length;
+        var modules = [];
+        // Flag indicating if there is error in loading a dependency.
+        var requireError = false;
+
+        if (unresolvedDependencies === 0) {
+            // No dependencies, run factory directly.
+            callback(undefined, factory.apply(null, modules));
+        } else {
+            // Load each dependency asynchronously, then run the factory function
+            dependencies.forEach(function(dependencyId, dependencyIndex) {
+                // Resolve relative id for non-reserved module ids
+                if (dependencyId !== 'exports' && dependencyId !== 'require' && dependencyId !== 'module') {
+                    dependencyId = _resolveRelativeId(base, dependencyId);
+                }
+
+                _require(dependencyId, moduleId, function(error, dependency) {
+                    // Only continue if no errors have occurred
+                    if (!requireError) {
+                        if (error) {
+                            requireError = true;
+                            callback(error);
+                        } else {
+                            console.log("Loaded " + dependencyId);
+                            modules[dependencyIndex] = dependency;
+                            unresolvedDependencies -= 1;
+
+                            if (unresolvedDependencies === 0) {
+                                console.log("All dependencies resolved for " + moduleId);
+                                callback(undefined, factory.apply(null, modules));
+                            }
+                        }
+                    }
+                });
+            });
+        }
     }
 
     /**
@@ -148,14 +182,24 @@
      * Require a module from modules.
      * @param {string} id the id of the module to be required
      * @param {string} moduleId the id of the module which is requiring id
+     * @param {Function} callback
      @ @returns {any} the module.
      */
-    function _require(id, moduleId) {
-        if (!(id in _modules)) {
-            throw new ReferenceError('The module "' + id + '" has not been loaded' +
-                (moduleId ? ' for ' + moduleId : ''));
+    function _require(id, moduleId, callback) {
+        if (id === 'exports') {
+            callback(undefined, {});
+        } else if (id === 'require') {
+            calback(undefined, this);
+        } else if (id === 'module') {
+            callback(undefined, {
+                id: moduleId
+            });
+        } else if (!(id in _modules)) {
+            callback(new ReferenceError('The module "' + id + '" has not been loaded' +
+                (moduleId ? ' for ' + moduleId : '')));
+        } else {
+            return callback(undefined, _modules[id]);
         }
-        return _modules[id];
     }
 
     // Exports

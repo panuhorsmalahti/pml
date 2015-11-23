@@ -1,5 +1,13 @@
 <script>
-  define('example', ['jquery.min'], function(jquery) {
+  define('local', [], function() {
+      return { foo: 1 };
+  });
+
+  define('local2', [], function() {
+      return { foo: 2 };
+  });
+
+  define('example', ['local', 'local2'], function(local, local2) {
       // Return an empty example module
       return {};
   });
