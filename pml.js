@@ -21,9 +21,6 @@
      *
      * @see https://github.com/amdjs/amdjs-api/wiki/AMD
      *
-     * Dependencies must be loaded prior to calling `define`, or you will receive
-     * an error.
-     *
      * @param {string=} id The id of the module being defined. If not provided,
      *     one will be given to the module based on the document it was called in.
      * @param {Array<string>=} dependencies A list of module ids that should be
