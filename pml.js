@@ -16,9 +16,24 @@
 
     // Default configuration
     var _config = {
-        baseUrl: "",
+        baseUrl: _getBaseUrl(),
         paths: {}
     };
+
+    /**
+     * Get the default base url.
+     * @returns {string} e.g. "http://127.0.0.1:3000"
+     */
+    function _getBaseUrl() {
+        var documentURI = document.documentURI;
+
+        // Remove last '/' if it exists
+        if (documentURI[documentURI.length - 1] === '/') {
+            documentURI = documentURI.slice(0, -1);
+        }
+
+        return documentURI;
+    }
 
     // `define`
 
@@ -189,12 +204,10 @@
                             return;
                         }
 
-                        console.log("Loaded " + dependencyId + " for " + moduleId);
                         modules[dependencyIndex] = dependency;
                         unresolvedDependencies -= 1;
 
                         if (unresolvedDependencies === 0) {
-                            console.log("All dependencies resolved for " + moduleId);
                             callback(undefined, factory.apply(null, modules));
                         }
                     }

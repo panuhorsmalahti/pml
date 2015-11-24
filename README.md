@@ -4,42 +4,11 @@ PML is an implementation of the
 [AMD specification](https://github.com/amdjs/amdjs-api/blob/master/AMD.md).
 The primary goal of it is to play nice with HTML Imports. Based on [IMD](https://github.com/PolymerLabs/IMD).
 
-Note: this is work in progress.
-
-## Why PML?
-
-JavaScript module systems generally perform three different tasks:
-
-  1. **Definition** Allow module authors to define an encapsulated unit of code,
-     including what other modules it depends on.
-  2. **Resolving** Given a module reference, resolve it to an actual module
-     instance. This typically involves a central module registry that maps
-     module names to instances.
-  3. **Loading** Given a module reference that is not yet loaded into the
-     registry, load it from some source, usually a URL (via an XHR).
-
-Together, PML and HTML Imports form a really great module system.
-
-## What about ES6 (ES2015) Modules?
-
-They're great. Really, we can't wait for them to be implemented natively in
-browsers. And until then, compilers and loaders like SystemJS and Babel do
-allow developers to use ES6 modules now, _if_ they're willing to deal with a
-build step.
-
-Not every project can or wishes to do so, and HTML Imports is not a JavaScript
-module definition system, so PML is an extremely lightweight way to use modules
-on top of imports.
-
-When the ES6 module loader spec is further along, we will look into ways of
-integrating the two so that JavaScript can import HTML "modules" and vice-versa.
-We're very excited about the possibilities for interop.
-
 ## How Do I?
 
 ### Download and Include PML
 
-PML is distributed as an HTML Import-able HTML file, naturally. Install and uselike this:
+PML is distributed as an HTML Import-able HTML file, naturally. Install and use like this:
 
 Install:
 ```
@@ -127,10 +96,12 @@ before loading anything dependencies.
 
 ```javascript
 require.config({
-    // Dependencies are loaded from this path, e.g. js/lib/jquery/dist/jquery.js
+    // Dependencies are loaded from this path, e.g. js/lib/..
+    // Defaults to the location of the HTML page that loads PML.
     baseUrl: "js/lib",
     // Mapping from module id to the path of the module
     paths: {
+      // In this case 'jquery' is loaded from /js/lib/jquery/dist/jquery.js
       jquery: "jquery/dist/jquery"
     }
 });
@@ -166,7 +137,20 @@ Or a node directly:
  })
  ```
 
-### ES6
+## What about ES6 (ES2015) Modules?
+
+They're great. Really, we can't wait for them to be implemented natively in
+browsers. And until then, compilers and loaders like SystemJS and Babel do
+allow developers to use ES6 modules now, _if_ they're willing to deal with a
+build step.
+
+Not every project can or wishes to do so, and HTML Imports is not a JavaScript
+module definition system, so PML is an extremely lightweight way to use modules
+on top of imports.
+
+When the ES6 module loader spec is further along, we will look into ways of
+integrating the two so that JavaScript can import HTML "modules" and vice-versa.
+We're very excited about the possibilities for interop.
 
 There is a lot to explore with ES6 module loading and HTML Imports. The loading
 and ordering semantics appear to be fully compatible, and given a configurable

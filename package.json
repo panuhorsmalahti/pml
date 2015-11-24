@@ -1,13 +1,16 @@
 {
   "name": "pml",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Polymer module loader",
   "keywords": [
     "polymer",
     "pml",
     "module",
     "loader",
-    "amd"
+    "amd",
+    "require",
+    "require.js",
+    "commonjs"
   ],
   "author": "Panu Horsmalahti <panu.horsmalahti@iki.fi>",
   "preferGlobal": true,
