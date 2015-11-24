@@ -96,7 +96,7 @@ before loading anything dependencies.
 
 ```javascript
 require.config({
-    // Dependencies are loaded from this path, e.g. js/lib/..
+    // Dependencies are loaded from this path, e.g. /js/lib/..
     // Defaults to the location of the HTML page that loads PML.
     baseUrl: "js/lib",
     // Mapping from module id to the path of the module
