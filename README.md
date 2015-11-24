@@ -120,6 +120,22 @@ the `as` attribute on a `<script>` tag:
 <script src="thingo.js" as="thingy"></script>
 ```
 
+## Configuration
+
+You can call require.config to set configuration options. This should be done
+before loading anything dependencies.
+
+```javascript
+require.config({
+    // Dependencies are loaded from this path, e.g. js/lib/jquery/dist/jquery.js
+    baseUrl: "js/lib",
+    // Mapping from module id to the path of the module
+    paths: {
+      jquery: "jquery/dist/jquery"
+    }
+});
+```
+
 ## Future work
 
 ### HTML dependencies.

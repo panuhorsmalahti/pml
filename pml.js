@@ -16,7 +16,8 @@
 
     // Default configuration
     var _config = {
-        baseUrl: ""
+        baseUrl: "",
+        paths: {}
     };
 
     // `define`
@@ -47,7 +48,6 @@
             id = inferredId;
         }
 
-        // TODO(nevir): Just support \ as path separators too. Yay Windows!
         if (id.indexOf('\\') !== -1) {
             throw new TypeError('Please use / as module path delimiters');
         }
@@ -106,7 +106,7 @@
      * @param {string} src to load, e.g. "test.js"
      * @param {Function} callback is called once the load is complete.
      */
-    function loadScript(src, callback) {
+    function _loadScript(src, callback) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = true;
@@ -201,6 +201,23 @@
     }
 
     /**
+     * Get module load path, e.g. 'js/lib/jquery.js'
+     * @param {string} id e.g. 'jquery'
+     * @returns {string}
+     */
+    function _getModulePath(id) {
+        var path = _config.baseUrl + '/';
+        if (id in _config.paths) {
+            path += _config.paths[id];
+        } else {
+            path += id;
+        }
+        path += '.js';
+
+        return path;
+    }
+
+    /**
      * Require a module from modules.
      * @param {string} id the id of the module to be required
      * @param {string} moduleId the id of the module which is requiring id
@@ -217,8 +234,7 @@
                 id: moduleId
             });
         } else if (!(id in _modules)) {
-            // TODO: Fix hardcoded jquery path.
-            loadScript(_config.baseUrl + '/jquery/dist/' + id + '.js', function() {
+            _loadScript(_getModulePath(id), function() {
                 // After loading the script the module should be loaded,
                 // assuming the library calls define().
                 if (_modules[id]) {

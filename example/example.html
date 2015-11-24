@@ -1,6 +1,9 @@
 <script>
   require.config({
-      baseUrl: "components"
+      baseUrl: "components",
+      paths: {
+        jquery: "jquery/dist/jquery"
+      }
   });
 
   define('local', [], function() {
@@ -13,7 +16,7 @@
 
   define('example', ['local', 'local2', 'jquery'], function(local, local2, $) {
       // Return an empty example module
-      console.log();
+      console.log($);
       return {};
   });
 </script>
