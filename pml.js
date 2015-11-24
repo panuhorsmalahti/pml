@@ -101,18 +101,43 @@
         return doc.baseURI;
     }
 
+    var scriptLoadingCallbacks = {};
+    var loadedScripts = [];
+
     /**
      * Append script to head and load it.
      * @param {string} src to load, e.g. "test.js"
      * @param {Function} callback is called once the load is complete.
      */
     function _loadScript(src, callback) {
+        // Script is already loading, just add the callback
+        if (scriptLoadingCallbacks[src]) {
+            scriptLoadingCallbacks[src].push(callback);
+            return;
+        }
+
+        if (loadedScripts.indexOf(src) !== -1) {
+            throw new Error('Script ' + src + ' has already been loaded!');
+        }
+        loadedScripts.push(src);
+
+        // Not loading before, create the callback array
+        scriptLoadingCallbacks[src] = [callback];
+
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = true;
         script.onload = function() {
-            callback();
+            // Execute all callbacks synchronously and in order
+            scriptLoadingCallbacks[src].forEach(function(callback) {
+                callback();
+            });
+
+            // After loading is complete, remove the callback array.
+            delete scriptLoadingCallbacks[src];
         };
+
+        // Start loading
         script.src = src;
         document.head.appendChild(script);
     }
@@ -156,7 +181,7 @@
                             requireError = true;
                             callback(error);
                         } else {
-                            console.log("Loaded " + dependencyId);
+                            console.log("Loaded " + dependencyId + " for " + moduleId);
                             modules[dependencyIndex] = dependency;
                             unresolvedDependencies -= 1;
 
