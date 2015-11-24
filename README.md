@@ -3,6 +3,7 @@
 PML is an implementation of the
 [AMD specification](https://github.com/amdjs/amdjs-api/blob/master/AMD.md).
 The primary goal of it is to play nice with HTML Imports. Based on [IMD](https://github.com/PolymerLabs/IMD).
+Currently PML supports basic loading of dependencies, HTML imports will be implemented later.
 
 ## How Do I?
 
@@ -34,10 +35,10 @@ Modules are defined exactly as in other AMD systems like RequireJS:
 Public modules are defined by name:
 
 Here's the definition of a mythical module, 'squidbits', that depends on the
-modules 'tentacles.html', and 'ink':
+modules 'tentacles.html', 'ink' and 'jquery';
 
 ```javascript
-define('squidbits', ['./tentacles.html', 'ink'], function(tentacles, ink) {
+define('squidbits', ['./tentacles.html', 'ink', 'jquery'], function(tentacles, ink, $) {
   return {tentacles: tentacles, ink: ink, squidbits: true};
 });
 ```
@@ -50,7 +51,7 @@ that the module will be defined inside an HTML file, like so:
 <script src="ink.js"></script>
 
 <script>
-define('squidbits', ['./tentacles.html', 'ink'], function(tentacles, ink) {
+define('squidbits', ['./tentacles.html', 'ink', 'jquery'], function(tentacles, ink) {
   return {tentacles: tentacles, ink: ink, squidbits: true};
 });
 </script>
@@ -61,6 +62,8 @@ Notice the `<link>` and `<script>` tags. These tell the browser to load
 other scripts have loaded and run, and 'tentacles.html' and 'ink.js' define
 modules, `squidbits`'s dependencies are guaranteed to be loaded and registered
 when the inline script runs.
+
+Note also that the `jquery` dependency is loaded automatically wihtout a `<script>` tag.
 
 _Note that we're assuming that `ink.js` defines a `ink` module here, and
 `tentacles.html` defines an anonymous module._
