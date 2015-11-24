@@ -16,6 +16,11 @@ Install:
 > bower install panuhorsmalahti/PML --save
 ```
 
+Or, with npm:
+```
+> npm install panuhorsmalahti/PML --save
+```
+
 Import:
 
 ```html
