@@ -65,7 +65,7 @@ other scripts have loaded and run, and 'tentacles.html' and 'ink.js' define
 modules, `squidbits`'s dependencies are guaranteed to be loaded and registered
 when the inline script runs.
 
-Note also that the `jquery` dependency is loaded automatically wihtout a `<script>` tag.
+Note also that the `jquery` dependency is loaded automatically without a `<script>` tag.
 
 _Note that we're assuming that `ink.js` defines a `ink` module here, and
 `tentacles.html` defines an anonymous module._
@@ -96,8 +96,8 @@ the `as` attribute on a `<script>` tag:
 
 ## Configuration
 
-You can call require.config to set configuration options. This should be done
-before loading anything dependencies.
+You can call `require.config` to set configuration options. This should be done
+before loading any dependencies.
 
 ```javascript
 require.config({
