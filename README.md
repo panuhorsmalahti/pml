@@ -24,10 +24,7 @@ Import:
 
 We recommend that HTML files that require or define _do_ _not_ directly import
 PML, but rather let the main page import PML, usually as the very first import.
-This is so that an application that really requires RequireJS to load modules
-(this can be true when loading pure JS modules with no corresponding `<script>`
-tags), can setup RequireJS instead of PML. Since PML is fully AMD compliant,
-all modules defined in HTML imports will work just fine.
+Since PML is fully AMD compliant, all modules defined in HTML imports will work just fine.
 
 ### Define a Module
 
