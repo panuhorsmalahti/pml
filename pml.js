@@ -137,6 +137,12 @@
             delete scriptLoadingCallbacks[src];
         };
 
+        script.onerror = function(error) {
+            scriptLoadingCallbacks[src].forEach(function(callback) {
+                callback(error);
+            });
+        }
+
         // Start loading
         script.src = src;
         document.head.appendChild(script);
@@ -180,15 +186,16 @@
                         if (error) {
                             requireError = true;
                             callback(error);
-                        } else {
-                            console.log("Loaded " + dependencyId + " for " + moduleId);
-                            modules[dependencyIndex] = dependency;
-                            unresolvedDependencies -= 1;
+                            return;
+                        }
 
-                            if (unresolvedDependencies === 0) {
-                                console.log("All dependencies resolved for " + moduleId);
-                                callback(undefined, factory.apply(null, modules));
-                            }
+                        console.log("Loaded " + dependencyId + " for " + moduleId);
+                        modules[dependencyIndex] = dependency;
+                        unresolvedDependencies -= 1;
+
+                        if (unresolvedDependencies === 0) {
+                            console.log("All dependencies resolved for " + moduleId);
+                            callback(undefined, factory.apply(null, modules));
                         }
                     }
                 });
@@ -259,7 +266,12 @@
                 id: moduleId
             });
         } else if (!(id in _modules)) {
-            _loadScript(_getModulePath(id), function() {
+            _loadScript(_getModulePath(id), function(error) {
+                if (error) {
+                    callback(error);
+                    return;
+                }
+
                 // After loading the script the module should be loaded,
                 // assuming the library calls define().
                 if (_modules[id]) {
